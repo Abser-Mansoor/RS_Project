@@ -11,6 +11,7 @@ export default function PaperCard({
   index = 0,
   isSaved,
   isActive,
+  showRecommendationMetrics = true,
   onSave,
   onSelect,
 }) {
@@ -55,10 +56,12 @@ export default function PaperCard({
         {paper.abstract.length > 230 ? `${paper.abstract.slice(0, 230)}...` : paper.abstract}
       </p>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
-        <MetricBar label="Relevance score" value={paper.relevanceScore} tone="accent" />
-        <MetricBar label="Similarity score" value={paper.similarityScore} tone="emerald" />
-      </div>
+      {showRecommendationMetrics ? (
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <MetricBar label="Relevance score" value={paper.relevanceScore} tone="accent" />
+          <MetricBar label="Similarity score" value={paper.similarityScore} tone="emerald" />
+        </div>
+      ) : null}
 
       <div className="mt-4 flex flex-wrap gap-2">
         {paper.keywords.slice(0, 4).map((keyword) => (
@@ -109,12 +112,14 @@ export default function PaperCard({
         </button>
       </div>
 
-      <p className="mt-4 text-xs text-[var(--color-text-soft)]">
-        Relevance (0-1):
-        <span className="ml-1 font-semibold text-[var(--color-text)]">
-          {formatScore(paper.relevanceScore)}
-        </span>
-      </p>
+      {showRecommendationMetrics ? (
+        <p className="mt-4 text-xs text-[var(--color-text-soft)]">
+          Relevance (0-1):
+          <span className="ml-1 font-semibold text-[var(--color-text)]">
+            {formatScore(paper.relevanceScore)}
+          </span>
+        </p>
+      ) : null}
     </article>
   );
 }

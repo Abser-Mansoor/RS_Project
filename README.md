@@ -1,16 +1,16 @@
 # RS_Project
 
-This project now includes a notebook-backed API so the frontend can consume recommendations generated from `Project_Exportable.ipynb` artifacts.
+This project now includes a notebook-backed API so the frontend can consume recommendations generated from notebook artifacts.
 
 ## Architecture
 
-- Notebook backend source: `Project_Exportable.ipynb`
+- Notebook backend source: `code.ipynb` (fallback: `Project_Exportable.ipynb`)
 - API server: `backend/app/main.py` (loads notebook code cells and exported bundle)
 - Frontend: `Frontend/` (React + Vite), calls `/api/recommendations`
 
 ## 1) Export Artifacts From Notebook
 
-Run the training/export cells in `Project_Exportable.ipynb` so a `recommender_bundle/` folder is created in the project root.
+Run the training/export cells in `code.ipynb` so a `recommender_bundle/` folder is created in the project root.
 
 Expected files in `recommender_bundle/`:
 
@@ -21,6 +21,16 @@ Expected files in `recommender_bundle/`:
 - `config.json`
 
 If this folder is missing, the backend starts in degraded mode and the frontend falls back to mock papers.
+
+The backend auto-detects both common bundle layouts:
+
+- `recommender_bundle/recommender_bundle/` (nested export)
+- `recommender_bundle/` (flat export)
+
+To reduce RAM pressure with very large bundles, the backend only loads a limited
+number of paper metadata records from `papers.json` for online querying (default: 10,000).
+Recommendation scoring still uses the full trained components (`vectorizer`,
+`tfidf_matrix`, and `popularity`).
 
 ## 2) Start Backend (FastAPI)
 
@@ -41,9 +51,10 @@ curl http://127.0.0.1:8000/api/health
 
 Optional environment variables:
 
-- `NOTEBOOK_PATH` (default: `Project_Exportable.ipynb`)
-- `RECOMMENDER_BUNDLE_DIR` (default: `recommender_bundle`)
+- `NOTEBOOK_PATH` (default auto-detect: `code.ipynb`, then `Project_Exportable.ipynb`)
+- `RECOMMENDER_BUNDLE_DIR` (default auto-detect: nested then flat bundle path)
 - `RECOMMENDER_TOP_K` (default: `80`)
+- `SEARCH_PAPER_LIMIT` (default: `10000`)
 - `DEFAULT_USER_HISTORY` (default: `1,10,25,40`)
 - `ALLOWED_ORIGINS` (default includes `localhost:5173`)
 

@@ -13,19 +13,28 @@ export default function ExplainabilityPanel({ paper }) {
   }
 
   return (
-    <aside className="surface reveal-up h-fit p-5 sm:p-6 xl:sticky xl:top-[102px]">
+    <aside className="surface reveal-up h-fit max-h-[calc(100vh-7rem)] overflow-y-auto p-5 sm:p-6">
       <h2 className="font-display text-xl font-semibold text-[var(--color-text)]">
-        Explainability panel
+        Paper Details
       </h2>
       <p className="mt-1 text-sm leading-relaxed text-[var(--color-text-soft)]">
-        Why this paper was recommended
+        Full abstract and recommendation analysis
       </p>
 
       <div className="mt-5 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-4">
         <p className="text-sm font-semibold leading-relaxed text-[var(--color-text)]">{paper.title}</p>
-        <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-soft)]">
-          {paper.explanation}
+        <p className="mt-3 text-sm leading-relaxed text-[var(--color-text-soft)]">
+          {paper.abstract}
         </p>
+      </div>
+
+      <div className="mt-5">
+        <div className="mb-3 rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-4">
+          <p className="text-sm font-semibold text-[var(--color-text)]">Why recommended:</p>
+          <p className="mt-2 text-sm leading-relaxed text-[var(--color-text-soft)]">
+            {paper.explanation}
+          </p>
+        </div>
       </div>
 
       <div className="mt-5">

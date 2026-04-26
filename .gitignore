@@ -1,1 +1,8 @@
 arxiv-metadata-oai-snapshot.json
+node_modules/
+dist/
+recommender_bundle/
+recommender_bundle.zip
+__pycache__/
+*.pyc
+app/__pycache__/

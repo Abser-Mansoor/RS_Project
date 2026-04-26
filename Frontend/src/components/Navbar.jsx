@@ -1,10 +1,12 @@
-import { MoonStar, Search, Sun, UserCircle2 } from "lucide-react";
+import { LogIn, MoonStar, Search, Sun, UserCircle2 } from "lucide-react";
 
 export default function Navbar({
   query,
   onQueryChange,
   isDark,
   onToggleTheme,
+  currentUser,
+  onAuthClick,
 }) {
   return (
     <header className="sticky top-0 z-20 border-b border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-xl">
@@ -50,11 +52,14 @@ export default function Navbar({
 
         <button
           type="button"
+          onClick={onAuthClick}
           className="inline-flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-2.5 py-2 text-[var(--color-text-soft)] transition-all duration-200 hover:-translate-y-[1px] hover:text-[var(--color-text)]"
           aria-label="User profile"
         >
-          <UserCircle2 size={18} />
-          <span className="hidden text-sm font-medium sm:inline">Researcher</span>
+          {currentUser ? <UserCircle2 size={18} /> : <LogIn size={18} />}
+          <span className="hidden text-sm font-medium sm:inline">
+            {currentUser ? currentUser.username : "Sign In"}
+          </span>
         </button>
       </div>
     </header>

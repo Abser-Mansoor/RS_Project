@@ -1,9 +1,7 @@
 import {
   BookOpenCheck,
   BookmarkCheck,
-  Compass,
   LayoutGrid,
-  SlidersHorizontal,
   Sparkles,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -13,13 +11,18 @@ import Navbar from "./components/Navbar";
 import PaperCard from "./components/PaperCard";
 import SearchSection from "./components/SearchSection";
 import { papersData } from "./data/mockPapers";
+import AuthModal from "./components/AuthModal";
+import {
+  getCurrentUser,
+  getSavedPapers,
+  getUserProfile,
+  removeSavedPaper,
+  savePaper,
+} from "./utils/userStorage";
 
 const sectionItems = [
   { label: "Dashboard", icon: LayoutGrid },
-  { label: "Explore Papers", icon: Compass },
   { label: "Saved Papers", icon: BookmarkCheck },
-  { label: "Recommendations", icon: Sparkles },
-  { label: "Settings", icon: SlidersHorizontal },
 ];
 
 const defaultFilters = {
@@ -49,17 +52,29 @@ export default function App() {
   const [isBackendConnected, setIsBackendConnected] = useState(false);
   const [backendError, setBackendError] = useState("");
   const [savedPaperIds, setSavedPaperIds] = useState([]);
+  const [savedPapersData, setSavedPapersData] = useState([]);
   const [selectedPaperId, setSelectedPaperId] = useState(papersData[0]?.id ?? null);
   const [isDarkMode, setIsDarkMode] = useState(getInitialTheme);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [currentUser, setCurrentUser] = useState(getCurrentUser());
 
   useEffect(() => {
     const controller = new AbortController();
     const timeoutId = window.setTimeout(async () => {
       setIsLoading(true);
       try {
+        const profileIds = currentUser?.profile || [];
+        const params = new URLSearchParams({
+          query,
+          top_k: "50",
+        });
+        if (profileIds.length > 0) {
+          params.set("profile_ids", profileIds.join(","));
+        }
+
         const response = await fetch(
-          `/api/recommendations?query=${encodeURIComponent(query)}&top_k=80`,
+          `/api/recommendations?${params.toString()}`,
           {
             signal: controller.signal,
           }
@@ -93,12 +108,63 @@ export default function App() {
       controller.abort();
       window.clearTimeout(timeoutId);
     };
-  }, [query]);
+  }, [currentUser, query]);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", isDarkMode);
     window.localStorage.setItem("rr-theme", isDarkMode ? "dark" : "light");
   }, [isDarkMode]);
+
+  useEffect(() => {
+    if (!currentUser) {
+      setSavedPaperIds([]);
+      setSavedPapersData([]);
+      return;
+    }
+
+    const savedIdSet = new Set([...getSavedPapers(), ...getUserProfile()]);
+
+    setSavedPaperIds(Array.from(savedIdSet));
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (!currentUser || savedPaperIds.length === 0) {
+      setSavedPapersData([]);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    const loadSavedByIds = async () => {
+      try {
+        const params = new URLSearchParams({ ids: savedPaperIds.join(",") });
+        const response = await fetch(`/api/papers/by-ids?${params.toString()}`, {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(`Saved papers request failed (${response.status})`);
+        }
+
+        const payload = await response.json();
+        const fetched = Array.isArray(payload?.papers) ? payload.papers : [];
+        setSavedPapersData(fetched);
+      } catch (error) {
+        if (error.name === "AbortError") {
+          return;
+        }
+
+        const fallback = papers.filter((paper) => savedPaperIds.includes(paper.id));
+        setSavedPapersData(fallback);
+      }
+    };
+
+    loadSavedByIds();
+
+    return () => {
+      controller.abort();
+    };
+  }, [currentUser, papers, savedPaperIds]);
 
   const categories = useMemo(() => {
     return ["All", ...new Set(papers.map((paper) => paper.category))];
@@ -130,28 +196,74 @@ export default function App() {
       });
   }, [filters, papers]);
 
+  const filteredSavedPapers = useMemo(() => {
+    return savedPapersData
+      .filter((paper) => {
+        const categoryMatch =
+          filters.category === "All" || paper.category === filters.category;
+        const yearMatch = filters.year === "All" || String(paper.year) === filters.year;
+        const authorMatch =
+          filters.author === "All" || paper.authors.includes(filters.author);
+
+        return categoryMatch && yearMatch && authorMatch;
+      })
+      .sort((firstPaper, secondPaper) => {
+        return secondPaper.relevanceScore - firstPaper.relevanceScore;
+      });
+  }, [filters, savedPapersData]);
+
+  const visiblePapers = useMemo(() => {
+    if (activeSection !== "Saved Papers") {
+      return filteredPapers;
+    }
+
+    return filteredSavedPapers;
+  }, [activeSection, filteredPapers, filteredSavedPapers]);
+
   useEffect(() => {
-    if (filteredPapers.length === 0) {
+    if (visiblePapers.length === 0) {
       setSelectedPaperId(null);
       return;
     }
 
-    if (!filteredPapers.some((paper) => paper.id === selectedPaperId)) {
-      setSelectedPaperId(filteredPapers[0].id);
+    if (!visiblePapers.some((paper) => paper.id === selectedPaperId)) {
+      setSelectedPaperId(visiblePapers[0].id);
     }
-  }, [filteredPapers, selectedPaperId]);
+  }, [visiblePapers, selectedPaperId]);
 
   const selectedPaper =
-    filteredPapers.find((paper) => paper.id === selectedPaperId) ?? null;
+    visiblePapers.find((paper) => paper.id === selectedPaperId) ?? null;
 
   const toggleSavePaper = (paperId) => {
     setSavedPaperIds((currentPaperIds) => {
-      if (currentPaperIds.includes(paperId)) {
-        return currentPaperIds.filter((id) => id !== paperId);
-      }
+      const isAlreadySaved = currentPaperIds.includes(paperId);
 
-      return [...currentPaperIds, paperId];
+      if (isAlreadySaved) {
+        if (currentUser) {
+          removeSavedPaper(paperId);
+          setCurrentUser(getCurrentUser());
+        }
+        return currentPaperIds.filter((id) => id !== paperId);
+      } else {
+        if (currentUser) {
+          savePaper(paperId);
+          setCurrentUser(getCurrentUser());
+        }
+        return [...currentPaperIds, paperId];
+      }
     });
+  };
+
+  const handleAuthChange = () => {
+    const user = getCurrentUser();
+    setCurrentUser(user);
+    if (user) {
+      const savedIdSet = new Set([...getSavedPapers(), ...getUserProfile()]);
+      setSavedPaperIds(Array.from(savedIdSet));
+    } else {
+      setSavedPaperIds([]);
+      setSavedPapersData([]);
+    }
   };
 
   return (
@@ -168,6 +280,14 @@ export default function App() {
         onQueryChange={setQuery}
         isDark={isDarkMode}
         onToggleTheme={() => setIsDarkMode((value) => !value)}
+        currentUser={currentUser}
+        onAuthClick={() => setIsAuthModalOpen(true)}
+      />
+
+      <AuthModal
+        isOpen={isAuthModalOpen}
+        onClose={() => setIsAuthModalOpen(false)}
+        onAuthChange={handleAuthChange}
       />
 
       <main className="mx-auto max-w-[1380px] px-4 pb-12 pt-7 sm:px-6 lg:px-10">
@@ -219,14 +339,16 @@ export default function App() {
           </div>
 
           <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1">
-            <div className="surface p-3.5">
-              <p className="text-xs uppercase tracking-[0.14em] text-[var(--color-text-soft)]">
-                Recommendations
-              </p>
-              <p className="mt-1 font-display text-2xl font-semibold text-[var(--color-text)]">
-                {filteredPapers.length}
-              </p>
-            </div>
+            {activeSection !== "Saved Papers" ? (
+              <div className="surface p-3.5">
+                <p className="text-xs uppercase tracking-[0.14em] text-[var(--color-text-soft)]">
+                  Recommendations
+                </p>
+                <p className="mt-1 font-display text-2xl font-semibold text-[var(--color-text)]">
+                  {visiblePapers.length}
+                </p>
+              </div>
+            ) : null}
             <div className="surface p-3.5">
               <p className="text-xs uppercase tracking-[0.14em] text-[var(--color-text-soft)]">
                 Saved papers
@@ -256,34 +378,39 @@ export default function App() {
           />
         </div>
 
-        <section className="reveal-up delay-2 mt-7 grid items-start gap-7 xl:grid-cols-[minmax(0,1.66fr)_minmax(0,390px)]">
-          <div>
-            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-              <p className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-soft)]">
-                <Sparkles size={16} className="text-[var(--color-accent)]" />
-                Recommended papers
-              </p>
-              <p className="flex items-center gap-2 text-xs text-[var(--color-text-soft)]">
-                <BookOpenCheck size={15} />
-                Transparency-first ranking
-              </p>
-            </div>
+        <section className="mt-7 grid items-start gap-7 xl:grid-cols-[minmax(0,1.66fr)_minmax(0,390px)]">
+          <div className="reveal-up delay-2">
+            {activeSection !== "Saved Papers" ? (
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <p className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-soft)]">
+                  <Sparkles size={16} className="text-[var(--color-accent)]" />
+                  Recommended papers
+                </p>
+                <p className="flex items-center gap-2 text-xs text-[var(--color-text-soft)]">
+                  <BookOpenCheck size={15} />
+                  Transparency-first ranking
+                </p>
+              </div>
+            ) : null}
 
             {isLoading ? (
               <LoadingSkeleton count={5} />
-            ) : filteredPapers.length > 0 ? (
+            ) : visiblePapers.length > 0 ? (
               <div className="space-y-4">
-                {filteredPapers.map((paper, index) => (
-                  <PaperCard
-                    key={paper.id}
-                    paper={paper}
-                    index={index}
-                    isSaved={savedPaperIds.includes(paper.id)}
-                    isActive={paper.id === selectedPaperId}
-                    onSave={() => toggleSavePaper(paper.id)}
-                    onSelect={() => setSelectedPaperId(paper.id)}
-                  />
-                ))}
+                {visiblePapers.map((paper, index) => {
+                  return (
+                    <PaperCard
+                      key={paper.id}
+                      paper={paper}
+                      index={index}
+                      isSaved={savedPaperIds.includes(paper.id)}
+                      isActive={paper.id === selectedPaperId}
+                      showRecommendationMetrics={activeSection !== "Saved Papers"}
+                      onSave={() => toggleSavePaper(paper.id)}
+                      onSelect={() => setSelectedPaperId(paper.id)}
+                    />
+                  );
+                })}
               </div>
             ) : (
               <div className="surface p-8 text-center">
@@ -297,7 +424,11 @@ export default function App() {
             )}
           </div>
 
-          <ExplainabilityPanel paper={selectedPaper} />
+          {activeSection !== "Saved Papers" ? (
+            <div className="lg:sticky lg:top-[102px] self-start">
+              <ExplainabilityPanel paper={selectedPaper} />
+            </div>
+          ) : null}
         </section>
       </main>
     </div>
