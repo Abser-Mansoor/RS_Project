@@ -49,15 +49,15 @@ export default function SearchSection({
 
       <div className="relative">
         <Search
-          size={20}
-          strokeWidth={3}
-          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--ink)]"
+          size={18}
+          strokeWidth={2.5}
+          className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[var(--text-soft)]"
         />
         <input
           value={query}
           onChange={(event) => onQueryChange(event.target.value)}
-          placeholder="TYPE TO SEARCH RESEARCH PAPERS..."
-          className="neu-input pl-12 py-4 text-base font-bold uppercase tracking-wider"
+          placeholder="Search research papers by topic, title or author..."
+          className="neu-input pl-12 py-3.5 text-base"
         />
       </div>
 

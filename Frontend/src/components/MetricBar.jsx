@@ -1,9 +1,11 @@
+import { useEffect, useState } from "react";
+
 const toneStyles = {
-  accent: { bg: "var(--accent)", label: "var(--ink)" },
+  accent:  { bg: "var(--accent)",   label: "var(--ink)" },
   emerald: { bg: "var(--accent-3)", label: "var(--ink)" },
-  amber: { bg: "var(--accent-6)", label: "var(--ink)" },
-  pink: { bg: "var(--accent-2)", label: "var(--ink)" },
-  purple: { bg: "var(--accent-5)", label: "var(--ink)" },
+  amber:   { bg: "var(--accent-6)", label: "var(--ink)" },
+  pink:    { bg: "var(--accent-2)", label: "#fff" },
+  purple:  { bg: "var(--accent-5)", label: "var(--ink)" },
 };
 
 function clampValue(value) {
@@ -11,32 +13,45 @@ function clampValue(value) {
   return Math.max(0, Math.min(1, value));
 }
 
-export default function MetricBar({ label, value, tone = "accent" }) {
-  const normalizedValue = clampValue(value);
-  const percentage = Math.round(normalizedValue * 100);
+export default function MetricBar({ label, value, tone = "accent", delay = 0 }) {
+  const pct = Math.round(clampValue(value) * 100);
+  const [width, setWidth] = useState(0);
   const style = toneStyles[tone] || toneStyles.accent;
+
+  useEffect(() => {
+    setWidth(0);
+    const t = setTimeout(() => setWidth(pct), 80 + delay);
+    return () => clearTimeout(t);
+  }, [pct, delay]);
 
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-soft)]">
+        <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-[var(--text-soft)]">
           {label}
         </span>
         <span
-          className="font-mono text-[11px] font-bold px-1.5 py-0.5 border-2 border-[var(--border)] rounded"
-          style={{ backgroundColor: style.bg, color: style.label }}
+          className="font-mono text-[11px] font-bold px-1.5 py-0.5 border-[2px] border-[var(--border)] rounded-[3px]"
+          style={{ background: style.bg, color: style.label }}
         >
-          {percentage}%
+          {pct}%
         </span>
       </div>
-      <div className="relative h-3.5 w-full border-[2.5px] border-[var(--border)] bg-[var(--paper-2)] overflow-hidden rounded-[3px]">
+      <div
+        className="h-3 w-full overflow-hidden"
+        style={{
+          background: "var(--paper-2)",
+          border: "2px solid var(--border)",
+          borderRadius: "3px",
+        }}
+      >
         <div
-          className="h-full transition-all duration-700 ease-out"
           style={{
-            width: `${percentage}%`,
-            backgroundColor: style.bg,
-            backgroundImage:
-              "repeating-linear-gradient(45deg, rgba(10,10,10,0.18) 0 6px, transparent 6px 12px)",
+            height: "100%",
+            width: `${width}%`,
+            background: style.bg,
+            transition: `width 700ms cubic-bezier(0.4, 0, 0.2, 1) ${delay}ms`,
+            borderRadius: "1px",
           }}
         />
       </div>

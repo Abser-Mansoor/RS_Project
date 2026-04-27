@@ -25,6 +25,17 @@ const sectionItems = [
   { label: "Saved Papers", icon: BookmarkCheck },
 ];
 
+const TECH = [
+  "TF-IDF",
+  "Cosine Similarity",
+  "Collaborative Filtering",
+  "Hybrid Ranking",
+  "Explainable AI",
+  "Python",
+  "Scikit-learn",
+  "React + Vite",
+];
+
 const defaultFilters = {
   category: "All",
   year: "All",
@@ -268,27 +279,6 @@ export default function App() {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[var(--paper)] text-[var(--text)]">
-      {/* Brutalist textured background */}
-      <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute inset-0 neu-grid-bg opacity-80" />
-        <div
-          className="absolute -top-32 -left-20 h-96 w-96 border-[3px] border-[var(--border)] opacity-60"
-          style={{ backgroundColor: "var(--accent)", transform: "rotate(-8deg)" }}
-        />
-        <div
-          className="absolute top-40 -right-24 h-80 w-80 border-[3px] border-[var(--border)] opacity-50"
-          style={{ backgroundColor: "var(--accent-2)", transform: "rotate(12deg)" }}
-        />
-        <div
-          className="absolute -bottom-40 left-1/3 h-96 w-96 border-[3px] border-[var(--border)] opacity-50"
-          style={{ backgroundColor: "var(--accent-3)", transform: "rotate(-15deg)" }}
-        />
-        <div
-          className="absolute bottom-20 right-1/4 h-60 w-60 border-[3px] border-[var(--border)] opacity-40"
-          style={{ backgroundColor: "var(--accent-5)", transform: "rotate(20deg)" }}
-        />
-      </div>
-
       <Navbar
         query={query}
         onQueryChange={setQuery}
@@ -297,6 +287,27 @@ export default function App() {
         currentUser={currentUser}
         onAuthClick={() => setIsAuthModalOpen(true)}
       />
+
+      {/* Tech stack ticker */}
+      <div
+        className="overflow-hidden border-b-[2.5px] border-[var(--border)]"
+        style={{ background: "var(--accent)" }}
+      >
+        <div
+          className="flex items-center py-2.5"
+          style={{ width: "max-content", animation: "marquee-x 28s linear infinite" }}
+        >
+          {[...TECH, ...TECH].map((item, i) => (
+            <span
+              key={i}
+              className="flex items-center gap-3 px-6 font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--ink)] whitespace-nowrap"
+            >
+              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--ink)]" />
+              {item}
+            </span>
+          ))}
+        </div>
+      </div>
 
       <AuthModal
         isOpen={isAuthModalOpen}
@@ -308,10 +319,18 @@ export default function App() {
         {/* HERO BLOCK */}
         <section className="reveal-up mb-8 grid gap-5 lg:grid-cols-[1.6fr_1fr] lg:items-stretch">
           <div className="neu bg-[var(--surface)] p-6 sm:p-8 relative overflow-hidden">
+            {/* Floating accent badge */}
             <div
-              className="absolute -top-1 -right-1 h-20 w-20 border-l-[3px] border-b-[3px] border-[var(--border)]"
-              style={{ backgroundColor: "var(--accent)" }}
-            />
+              className="absolute top-5 right-5 h-14 w-14 flex items-center justify-center border-[2.5px] border-[var(--border)]"
+              style={{
+                backgroundColor: "var(--accent)",
+                boxShadow: "var(--shadow-sm)",
+                animation: "float 3s ease-in-out infinite",
+              }}
+            >
+              <Sparkles size={22} strokeWidth={2.5} className="text-[var(--ink)]" />
+            </div>
+
             <span className="inline-flex items-center gap-1.5 neu-tag" style={{ backgroundColor: "var(--accent-3)" }}>
               <span className="inline-block h-2 w-2 rounded-full bg-ink animate-blink" />
               EXPLAINABLE · OPEN-SOURCE
@@ -324,8 +343,8 @@ export default function App() {
                 className="inline-block px-2 mt-2"
                 style={{
                   backgroundColor: "var(--accent-2)",
-                  boxShadow: "4px 4px 0 0 var(--border)",
-                  border: "3px solid var(--border)",
+                  boxShadow: "var(--shadow-sm)",
+                  border: "2.5px solid var(--border)",
                 }}
               >
                 that explain
@@ -383,7 +402,7 @@ export default function App() {
                 <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-ink">
                   Recommendations
                 </p>
-                <p className="mt-1 font-display text-4xl uppercase text-ink leading-none">
+                <p key={visiblePapers.length} className="mt-1 font-display text-4xl uppercase text-ink leading-none animate-count-pop">
                   {String(visiblePapers.length).padStart(2, "0")}
                 </p>
               </div>
@@ -395,7 +414,7 @@ export default function App() {
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-ink">
                 Saved papers
               </p>
-              <p className="mt-1 font-display text-4xl uppercase text-ink leading-none">
+              <p key={savedPaperIds.length} className="mt-1 font-display text-4xl uppercase text-ink leading-none animate-count-pop">
                 {String(savedPaperIds.length).padStart(2, "0")}
               </p>
             </div>
@@ -406,7 +425,7 @@ export default function App() {
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-ink">
                 Active mode
               </p>
-              <p className="mt-1 font-display text-lg sm:text-xl uppercase tracking-tight text-ink leading-tight">
+              <p key={activeSection} className="mt-1 font-display text-lg sm:text-xl uppercase tracking-tight text-ink leading-tight animate-count-pop">
                 {activeSection}
               </p>
             </div>

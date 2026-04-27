@@ -5,46 +5,48 @@
 @tailwind utilities;
 
 /* =========================================================
-   NEUBRUTALISM THEME
+   CLEAN NEUBRUTALISM — PAPER//PUNK
    ========================================================= */
 
 :root {
   --ink: #0a0a0a;
-  --paper: #fef6e4;
-  --paper-2: #fffaeb;
+  --paper: #fafaf7;
+  --paper-2: #f2f2ed;
   --surface: #ffffff;
   --text: #0a0a0a;
-  --text-soft: #4a4a4a;
+  --text-soft: #57574f;
   --border: #0a0a0a;
-  --shadow: 6px 6px 0 0 #0a0a0a;
-  --shadow-sm: 4px 4px 0 0 #0a0a0a;
+  --shadow: 4px 4px 0 0 #0a0a0a;
+  --shadow-sm: 3px 3px 0 0 #0a0a0a;
   --shadow-xs: 2px 2px 0 0 #0a0a0a;
+  --shadow-lg: 6px 6px 0 0 #0a0a0a;
   --shadow-pressed: 2px 2px 0 0 #0a0a0a;
 
-  --accent: #ffd23f;
-  --accent-2: #ff5c8a;
-  --accent-3: #7afcd1;
-  --accent-4: #74c0fc;
-  --accent-5: #c0a8ff;
-  --accent-6: #ff8c42;
+  --accent: #ffe449;
+  --accent-2: #ff5580;
+  --accent-3: #22e09a;
+  --accent-4: #38bdf8;
+  --accent-5: #c084fc;
+  --accent-6: #fb923c;
 
-  --grid: rgba(10, 10, 10, 0.08);
+  --grid: rgba(10, 10, 10, 0.055);
 }
 
 .dark {
-  --ink: #fef6e4;
-  --paper: #15131f;
-  --paper-2: #1d1a2b;
-  --surface: #221f33;
-  --text: #fef6e4;
-  --text-soft: #c8c2d9;
-  --border: #fef6e4;
-  --shadow: 6px 6px 0 0 #fef6e4;
-  --shadow-sm: 4px 4px 0 0 #fef6e4;
-  --shadow-xs: 2px 2px 0 0 #fef6e4;
-  --shadow-pressed: 2px 2px 0 0 #fef6e4;
+  --ink: #fafaf7;
+  --paper: #111113;
+  --paper-2: #1a1a1e;
+  --surface: #1e1e22;
+  --text: #fafaf7;
+  --text-soft: #b0b0ac;
+  --border: #fafaf7;
+  --shadow: 4px 4px 0 0 #fafaf7;
+  --shadow-sm: 3px 3px 0 0 #fafaf7;
+  --shadow-xs: 2px 2px 0 0 #fafaf7;
+  --shadow-lg: 6px 6px 0 0 #fafaf7;
+  --shadow-pressed: 2px 2px 0 0 #fafaf7;
 
-  --grid: rgba(254, 246, 228, 0.07);
+  --grid: rgba(250, 250, 247, 0.045);
 }
 
 * { box-sizing: border-box; }
@@ -61,41 +63,53 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Subtle dot grid — sits behind everything */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image: radial-gradient(var(--grid) 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
+  pointer-events: none;
+}
+
 ::selection {
   background: var(--accent);
   color: var(--ink);
 }
 
-::-webkit-scrollbar { width: 14px; height: 14px; }
+::-webkit-scrollbar { width: 12px; height: 12px; }
 ::-webkit-scrollbar-track {
   background: var(--paper);
-  border-left: 3px solid var(--border);
+  border-left: 2.5px solid var(--border);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--accent);
-  border: 3px solid var(--border);
+  border: 2.5px solid var(--border);
 }
 ::-webkit-scrollbar-thumb:hover { background: var(--accent-2); }
 
 @layer components {
   .neu {
     background-color: var(--surface);
-    border: 3px solid var(--border);
+    border: 2.5px solid var(--border);
     box-shadow: var(--shadow);
     border-radius: 0;
-    transition: transform 160ms cubic-bezier(.2,.8,.2,1),
-                box-shadow 160ms cubic-bezier(.2,.8,.2,1),
+    transition: transform 180ms cubic-bezier(.2,.8,.2,1),
+                box-shadow 180ms cubic-bezier(.2,.8,.2,1),
                 background-color 220ms ease;
   }
-  .neu-rounded { border-radius: 14px; }
+  .neu-rounded { border-radius: 12px; }
 
+  /* Lift-up hover — card floats away from its shadow, click presses it down */
   .neu-press { cursor: pointer; }
   .neu-press:hover {
-    transform: translate(2px, 2px);
-    box-shadow: var(--shadow-sm);
+    transform: translate(-2px, -3px);
+    box-shadow: var(--shadow-lg);
   }
   .neu-press:active {
-    transform: translate(6px, 6px);
+    transform: translate(2px, 2px);
     box-shadow: 0 0 0 0 var(--border);
   }
 
@@ -103,17 +117,17 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 0.6rem 1rem;
+    gap: 0.4rem;
+    padding: 0.55rem 1rem;
     font-family: "Space Grotesk", sans-serif;
     font-weight: 700;
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     letter-spacing: 0.01em;
     color: var(--ink);
     background-color: var(--surface);
-    border: 3px solid var(--border);
+    border: 2.5px solid var(--border);
     box-shadow: var(--shadow-sm);
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
     transition: transform 140ms cubic-bezier(.2,.8,.2,1),
                 box-shadow 140ms cubic-bezier(.2,.8,.2,1),
@@ -122,38 +136,38 @@ body {
     user-select: none;
   }
   .neu-btn:hover:not(:disabled) {
-    transform: translate(2px, 2px);
-    box-shadow: var(--shadow-xs);
+    transform: translate(-1px, -2px);
+    box-shadow: var(--shadow);
   }
   .neu-btn:active:not(:disabled) {
-    transform: translate(4px, 4px);
+    transform: translate(3px, 3px);
     box-shadow: 0 0 0 0 var(--border);
   }
   .neu-btn:disabled { opacity: 0.55; cursor: not-allowed; }
 
   .neu-btn-primary { background-color: var(--accent); color: #0a0a0a; }
-  .neu-btn-pink { background-color: var(--accent-2); color: #0a0a0a; }
+  .neu-btn-pink { background-color: var(--accent-2); color: #fff; }
   .neu-btn-mint { background-color: var(--accent-3); color: #0a0a0a; }
   .neu-btn-sky { background-color: var(--accent-4); color: #0a0a0a; }
   .neu-btn-purple { background-color: var(--accent-5); color: #0a0a0a; }
-  .neu-btn-danger { background-color: #ff4747; color: #fef6e4; }
-  .neu-btn-icon { padding: 0.55rem; width: 2.5rem; height: 2.5rem; }
+  .neu-btn-danger { background-color: #ef4444; color: #fff; }
+  .neu-btn-icon { padding: 0.5rem; width: 2.4rem; height: 2.4rem; }
 
   .neu-input {
     width: 100%;
-    padding: 0.7rem 1rem;
+    padding: 0.65rem 1rem;
     font-family: "Space Grotesk", sans-serif;
     font-weight: 500;
-    font-size: 0.95rem;
+    font-size: 0.9375rem;
     color: var(--text);
     background-color: var(--surface);
-    border: 3px solid var(--border);
+    border: 2.5px solid var(--border);
     box-shadow: var(--shadow-xs);
-    border-radius: 10px;
+    border-radius: 8px;
     outline: none;
     transition: transform 120ms ease, box-shadow 120ms ease, background-color 180ms ease;
   }
-  .neu-input::placeholder { color: var(--text-soft); opacity: 0.7; }
+  .neu-input::placeholder { color: var(--text-soft); opacity: 0.8; }
   .neu-input:focus {
     transform: translate(-1px, -1px);
     box-shadow: var(--shadow-sm);
@@ -162,25 +176,25 @@ body {
 
   .neu-select {
     width: 100%;
-    padding: 0.7rem 2.4rem 0.7rem 1rem;
+    padding: 0.6rem 2.4rem 0.6rem 1rem;
     font-family: "Space Grotesk", sans-serif;
     font-weight: 600;
     font-size: 0.875rem;
     color: var(--text);
     background-color: var(--surface);
-    border: 3px solid var(--border);
+    border: 2.5px solid var(--border);
     box-shadow: var(--shadow-xs);
-    border-radius: 10px;
+    border-radius: 8px;
     outline: none;
     appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230a0a0a' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230a0a0a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
     background-repeat: no-repeat;
-    background-position: right 1rem center;
+    background-position: right 0.9rem center;
     cursor: pointer;
     transition: transform 120ms ease, box-shadow 120ms ease;
   }
   .dark .neu-select {
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23fef6e4' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23fafaf7' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'/%3e%3c/svg%3e");
   }
   .neu-select:hover, .neu-select:focus {
     transform: translate(-1px, -1px);
@@ -190,16 +204,16 @@ body {
   .neu-chip {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.3rem;
     padding: 0.3rem 0.65rem;
     font-family: "Space Grotesk", sans-serif;
     font-weight: 700;
-    font-size: 0.72rem;
-    letter-spacing: 0.04em;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
     color: var(--ink);
     background-color: var(--surface);
-    border: 2.5px solid var(--border);
+    border: 2px solid var(--border);
     box-shadow: 2px 2px 0 0 var(--border);
     border-radius: 999px;
   }
@@ -211,73 +225,108 @@ body {
     padding: 0.25rem 0.55rem;
     font-family: "Space Grotesk", sans-serif;
     font-weight: 700;
-    font-size: 0.7rem;
-    letter-spacing: 0.02em;
+    font-size: 0.695rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     color: var(--ink);
-    background-color: var(--surface);
+    background-color: var(--paper-2);
     border: 2px solid var(--border);
-    box-shadow: 2px 2px 0 0 var(--border);
-    border-radius: 6px;
+    box-shadow: var(--shadow-xs);
+    border-radius: 5px;
   }
 
-  .neu-grid-bg {
-    background-image:
-      linear-gradient(var(--grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
-    background-size: 32px 32px;
-  }
-
-  .neu-stripes {
-    background-image: repeating-linear-gradient(
-      45deg,
-      var(--ink) 0,
-      var(--ink) 4px,
-      transparent 4px,
-      transparent 12px
-    );
-  }
+  /* Legacy — kept so existing JSX doesn't break */
+  .neu-grid-bg { display: none; }
+  .neu-stripes { display: none; }
 }
 
+/* =========================
+   REVEAL ANIMATIONS
+   ========================= */
 .reveal-up {
   opacity: 0;
-  transform: translateY(14px);
-  animation: reveal-up 480ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+  transform: translateY(18px);
+  animation: reveal-up 500ms cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
 }
-.delay-1 { animation-delay: 90ms; }
-.delay-2 { animation-delay: 180ms; }
-.delay-3 { animation-delay: 270ms; }
+.delay-1 { animation-delay: 80ms; }
+.delay-2 { animation-delay: 160ms; }
+.delay-3 { animation-delay: 240ms; }
+.delay-4 { animation-delay: 320ms; }
 
+/* =========================
+   KEYFRAMES
+   ========================= */
 @keyframes reveal-up {
-  0% { opacity: 0; transform: translateY(14px); }
-  100% { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%      { transform: translateY(-10px); }
+}
+
+@keyframes count-pop {
+  0%   { transform: scale(0.75) translateY(8px); opacity: 0; }
+  60%  { transform: scale(1.08) translateY(-2px); }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes marquee-x {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes pop-in {
+  0%   { transform: scale(0.92) translateY(8px); opacity: 0; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.2; }
+}
+
+/* =========================
+   SHIMMER SKELETON
+   ========================= */
 .shimmer {
   position: relative;
   overflow: hidden;
   background-color: var(--paper-2);
-  border: 2.5px solid var(--border);
-  border-radius: 6px;
+  border: 2px solid var(--border);
+  border-radius: 5px;
 }
 .shimmer::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 210, 63, 0.55) 50%, transparent 100%);
-  background-size: 220% 100%;
-  animation: shimmer 1.4s linear infinite;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 228, 73, 0.45) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer-sweep 1.5s ease-in-out infinite;
 }
 .dark .shimmer::after {
-  background: linear-gradient(90deg, transparent 0%, rgba(192, 168, 255, 0.35) 50%, transparent 100%);
-  background-size: 220% 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(192, 132, 252, 0.28) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
 }
-@keyframes shimmer {
-  0% { background-position: -120% 0; }
-  100% { background-position: 220% 0; }
+@keyframes shimmer-sweep {
+  0%   { background-position: -100% 0; }
+  100% { background-position: 200% 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reveal-up, .shimmer::after {
+  .reveal-up,
+  .shimmer::after {
     animation: none;
     opacity: 1;
     transform: none;

@@ -68,9 +68,9 @@ export default function AuthModal({ isOpen, onClose, onAuthChange }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header band */}
-        <div className="-mx-6 -mt-6 sm:-mx-8 sm:-mt-8 mb-6 border-b-[3px] border-[var(--border)] bg-neu-yellow px-6 sm:px-8 py-4 flex items-center justify-between">
+        <div className="-mx-6 -mt-6 sm:-mx-8 sm:-mt-8 mb-6 border-b-[2.5px] border-[var(--border)] bg-neu-yellow px-6 sm:px-8 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center border-[3px] border-[var(--border)] bg-[var(--surface)] shadow-[3px_3px_0_0_var(--border)]">
+            <div className="flex h-9 w-9 items-center justify-center border-[2.5px] border-[var(--border)] bg-[var(--surface)]" style={{ boxShadow: "var(--shadow-xs)" }}>
               {currentUser ? (
                 <BookmarkCheck size={16} strokeWidth={3} className="text-ink" />
               ) : mode === "login" ? (
@@ -96,8 +96,8 @@ export default function AuthModal({ isOpen, onClose, onAuthChange }) {
         {currentUser ? (
           <div className="space-y-4">
             <div
-              className="border-[3px] border-[var(--border)] bg-[var(--paper-2)] p-4"
-              style={{ boxShadow: "4px 4px 0 0 var(--accent-3)" }}
+              className="border-[2.5px] border-[var(--border)] bg-[var(--paper-2)] p-4"
+              style={{ boxShadow: "var(--shadow)" }}
             >
               <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--text-soft)]">
                 Logged in as
@@ -133,8 +133,8 @@ export default function AuthModal({ isOpen, onClose, onAuthChange }) {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="ENTER USERNAME"
-                className="neu-input uppercase tracking-wider"
+                placeholder="Enter your username"
+                className="neu-input"
                 disabled={isLoading}
               />
             </div>
@@ -147,16 +147,16 @@ export default function AuthModal({ isOpen, onClose, onAuthChange }) {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="ENTER PASSWORD"
-                className="neu-input uppercase tracking-wider"
+                placeholder="Enter your password"
+                className="neu-input"
                 disabled={isLoading}
               />
             </div>
 
             {error && (
               <div
-                className="flex items-start gap-2 border-[3px] border-[var(--border)] bg-neu-red p-3 text-sm font-bold text-cream"
-                style={{ boxShadow: "3px 3px 0 0 var(--border)" }}
+                className="flex items-start gap-2 border-[2.5px] border-[var(--border)] p-3 text-sm font-bold"
+                style={{ background: "var(--accent-2)", color: "#fff", boxShadow: "var(--shadow-xs)" }}
               >
                 <AlertOctagon size={16} strokeWidth={3} className="shrink-0 mt-0.5" />
                 <span>{error}</span>
