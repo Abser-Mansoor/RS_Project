@@ -267,12 +267,26 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-[var(--color-bg)] text-[var(--color-text)] transition-colors duration-300">
+    <div className="relative min-h-screen overflow-x-hidden bg-[var(--paper)] text-[var(--text)]">
+      {/* Brutalist textured background */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-24 left-6 h-80 w-80 rounded-full bg-sky-300/40 blur-3xl dark:bg-sky-700/25" />
-        <div className="absolute right-0 top-24 h-[32rem] w-[32rem] rounded-full bg-cyan-200/40 blur-3xl dark:bg-cyan-700/15" />
-        <div className="absolute -bottom-20 left-1/3 h-72 w-72 rounded-full bg-blue-200/40 blur-3xl dark:bg-blue-700/20" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_1px_1px,rgba(100,116,139,0.12)_1px,transparent_1px)] [background-size:24px_24px] dark:bg-[radial-gradient(circle_at_1px_1px,rgba(148,163,184,0.08)_1px,transparent_1px)]" />
+        <div className="absolute inset-0 neu-grid-bg opacity-80" />
+        <div
+          className="absolute -top-32 -left-20 h-96 w-96 border-[3px] border-[var(--border)] opacity-60"
+          style={{ backgroundColor: "var(--accent)", transform: "rotate(-8deg)" }}
+        />
+        <div
+          className="absolute top-40 -right-24 h-80 w-80 border-[3px] border-[var(--border)] opacity-50"
+          style={{ backgroundColor: "var(--accent-2)", transform: "rotate(12deg)" }}
+        />
+        <div
+          className="absolute -bottom-40 left-1/3 h-96 w-96 border-[3px] border-[var(--border)] opacity-50"
+          style={{ backgroundColor: "var(--accent-3)", transform: "rotate(-15deg)" }}
+        />
+        <div
+          className="absolute bottom-20 right-1/4 h-60 w-60 border-[3px] border-[var(--border)] opacity-40"
+          style={{ backgroundColor: "var(--accent-5)", transform: "rotate(20deg)" }}
+        />
       </div>
 
       <Navbar
@@ -290,31 +304,56 @@ export default function App() {
         onAuthChange={handleAuthChange}
       />
 
-      <main className="mx-auto max-w-[1380px] px-4 pb-12 pt-7 sm:px-6 lg:px-10">
-        <section className="reveal-up mb-7 grid gap-4 lg:grid-cols-[1.6fr_1fr] lg:items-end">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--color-accent)]">
-              Explainable research engine
-            </p>
-            <h1 className="mt-2 max-w-2xl font-display text-3xl font-semibold leading-tight text-[var(--color-text)] sm:text-[2.15rem]">
-              Discover research papers with transparent AI recommendations
+      <main className="relative mx-auto max-w-[1380px] px-4 pb-16 pt-8 sm:px-6 lg:px-10">
+        {/* HERO BLOCK */}
+        <section className="reveal-up mb-8 grid gap-5 lg:grid-cols-[1.6fr_1fr] lg:items-stretch">
+          <div className="neu bg-[var(--surface)] p-6 sm:p-8 relative overflow-hidden">
+            <div
+              className="absolute -top-1 -right-1 h-20 w-20 border-l-[3px] border-b-[3px] border-[var(--border)]"
+              style={{ backgroundColor: "var(--accent)" }}
+            />
+            <span className="inline-flex items-center gap-1.5 neu-tag" style={{ backgroundColor: "var(--accent-3)" }}>
+              <span className="inline-block h-2 w-2 rounded-full bg-ink animate-blink" />
+              EXPLAINABLE · OPEN-SOURCE
+            </span>
+
+            <h1 className="mt-4 font-display text-4xl sm:text-5xl uppercase leading-[0.95] tracking-tight text-[var(--text)]">
+              Discover papers
+              <br />
+              <span
+                className="inline-block px-2 mt-2"
+                style={{
+                  backgroundColor: "var(--accent-2)",
+                  boxShadow: "4px 4px 0 0 var(--border)",
+                  border: "3px solid var(--border)",
+                }}
+              >
+                that explain
+              </span>{" "}
+              themselves.
             </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-relaxed text-[var(--color-text-soft)] sm:text-[0.95rem]">
-              Search a curated recommendation stream and inspect exactly why each paper
-              appears through keyword overlap, similarity evidence, and popularity signals.
+
+            <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-[var(--text)] font-medium">
+              A transparent research recommender. Inspect <b>why</b> each paper is
+              recommended through keyword overlap, similarity evidence, and popularity
+              signals — no black boxes.
             </p>
 
             {backendError ? (
-              <p className="mt-3 rounded-xl border border-amber-300/60 bg-amber-100/70 px-3 py-2 text-xs text-amber-800 dark:border-amber-400/35 dark:bg-amber-900/30 dark:text-amber-200">
-                {backendError}
-              </p>
+              <div
+                className="mt-5 inline-flex items-start gap-2 border-[3px] border-[var(--border)] bg-neu-orange px-3 py-2 text-xs font-bold text-ink"
+                style={{ boxShadow: "3px 3px 0 0 var(--border)" }}
+              >
+                ⚠ {backendError}
+              </div>
             ) : (
-              <p className="mt-3 text-xs text-[var(--color-text-soft)]">
-                Source: {isBackendConnected ? "Project_Exportable.ipynb backend" : "Local data"}
+              <p className="mt-5 inline-flex items-center gap-2 neu-tag" style={{ backgroundColor: isBackendConnected ? "var(--accent-3)" : "var(--paper-2)" }}>
+                <span className={`inline-block h-2 w-2 rounded-full ${isBackendConnected ? "bg-ink" : "bg-[var(--text-soft)]"}`} />
+                {isBackendConnected ? "LIVE BACKEND CONNECTED" : "OFFLINE · USING MOCK DATA"}
               </p>
             )}
 
-            <div className="mt-5 flex flex-wrap gap-2">
+            <div className="mt-6 flex flex-wrap gap-3">
               {sectionItems.map((item) => {
                 const Icon = item.icon;
                 const isActive = item.label === activeSection;
@@ -324,44 +363,52 @@ export default function App() {
                     key={item.label}
                     type="button"
                     onClick={() => setActiveSection(item.label)}
-                    className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-xs font-semibold transition-all duration-200 ${
-                      isActive
-                        ? "border-[var(--color-accent)] bg-[var(--color-accent-soft)] text-[var(--color-accent)]"
-                        : "border-[var(--color-border)] bg-[var(--color-surface)] text-[var(--color-text-soft)] hover:border-[var(--color-accent)]/40 hover:text-[var(--color-text)]"
-                    }`}
+                    className={`neu-btn ${isActive ? "neu-btn-primary" : ""}`}
                   >
-                    <Icon size={14} />
-                    {item.label}
+                    <Icon size={15} strokeWidth={3} />
+                    <span className="uppercase tracking-wide">{item.label}</span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          <div className="grid gap-2 sm:grid-cols-3 lg:grid-cols-1">
+          {/* Stat cards */}
+          <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1 lg:auto-rows-fr">
             {activeSection !== "Saved Papers" ? (
-              <div className="surface p-3.5">
-                <p className="text-xs uppercase tracking-[0.14em] text-[var(--color-text-soft)]">
+              <div
+                className="neu p-4"
+                style={{ backgroundColor: "var(--accent)" }}
+              >
+                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-ink">
                   Recommendations
                 </p>
-                <p className="mt-1 font-display text-2xl font-semibold text-[var(--color-text)]">
-                  {visiblePapers.length}
+                <p className="mt-1 font-display text-4xl uppercase text-ink leading-none">
+                  {String(visiblePapers.length).padStart(2, "0")}
                 </p>
               </div>
             ) : null}
-            <div className="surface p-3.5">
-              <p className="text-xs uppercase tracking-[0.14em] text-[var(--color-text-soft)]">
+            <div
+              className="neu p-4"
+              style={{ backgroundColor: "var(--accent-2)" }}
+            >
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-ink">
                 Saved papers
               </p>
-              <p className="mt-1 font-display text-2xl font-semibold text-[var(--color-text)]">
-                {savedPaperIds.length}
+              <p className="mt-1 font-display text-4xl uppercase text-ink leading-none">
+                {String(savedPaperIds.length).padStart(2, "0")}
               </p>
             </div>
-            <div className="surface p-3.5 sm:col-span-3 lg:col-span-1">
-              <p className="text-xs uppercase tracking-[0.14em] text-[var(--color-text-soft)]">
-                Active section
+            <div
+              className="neu p-4 sm:col-span-3 lg:col-span-1"
+              style={{ backgroundColor: "var(--accent-4)" }}
+            >
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-ink">
+                Active mode
               </p>
-              <p className="mt-1 text-sm font-semibold text-[var(--color-text)]">{activeSection}</p>
+              <p className="mt-1 font-display text-lg sm:text-xl uppercase tracking-tight text-ink leading-tight">
+                {activeSection}
+              </p>
             </div>
           </div>
         </section>
@@ -378,25 +425,37 @@ export default function App() {
           />
         </div>
 
-        <section className="mt-7 grid items-start gap-7 xl:grid-cols-[minmax(0,1.66fr)_minmax(0,390px)]">
+        <section className="mt-8 grid items-start gap-7 xl:grid-cols-[minmax(0,1.66fr)_minmax(0,400px)]">
           <div className="reveal-up delay-2">
             {activeSection !== "Saved Papers" ? (
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                <p className="flex items-center gap-2 text-sm font-medium text-[var(--color-text-soft)]">
-                  <Sparkles size={16} className="text-[var(--color-accent)]" />
-                  Recommended papers
-                </p>
-                <p className="flex items-center gap-2 text-xs text-[var(--color-text-soft)]">
-                  <BookOpenCheck size={15} />
-                  Transparency-first ranking
-                </p>
+              <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-9 w-9 items-center justify-center border-[2.5px] border-[var(--border)] bg-neu-yellow shadow-[3px_3px_0_0_var(--border)]">
+                    <Sparkles size={16} strokeWidth={3} className="text-ink" />
+                  </div>
+                  <h2 className="font-display text-lg uppercase tracking-tight text-[var(--text)]">
+                    Recommended Papers
+                  </h2>
+                </div>
+                <span className="neu-tag" style={{ backgroundColor: "var(--accent-3)" }}>
+                  <BookOpenCheck size={11} strokeWidth={3} /> Transparency-first
+                </span>
               </div>
-            ) : null}
+            ) : (
+              <div className="mb-5 flex items-center gap-2">
+                <div className="flex h-9 w-9 items-center justify-center border-[2.5px] border-[var(--border)] bg-neu-pink shadow-[3px_3px_0_0_var(--border)]">
+                  <BookmarkCheck size={16} strokeWidth={3} className="text-ink" />
+                </div>
+                <h2 className="font-display text-lg uppercase tracking-tight text-[var(--text)]">
+                  Your Saved Papers
+                </h2>
+              </div>
+            )}
 
             {isLoading ? (
               <LoadingSkeleton count={5} />
             ) : visiblePapers.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-6">
                 {visiblePapers.map((paper, index) => {
                   return (
                     <PaperCard
@@ -413,23 +472,40 @@ export default function App() {
                 })}
               </div>
             ) : (
-              <div className="surface p-8 text-center">
-                <h3 className="font-display text-xl font-semibold text-[var(--color-text)]">
+              <div
+                className="neu p-10 text-center bg-[var(--surface)]"
+                style={{ boxShadow: "6px 6px 0 0 var(--accent-2)" }}
+              >
+                <p className="font-display text-2xl uppercase tracking-tight text-[var(--text)]">
                   No matching papers
-                </h3>
-                <p className="mt-2 text-sm text-[var(--color-text-soft)]">
-                  Try adjusting your query or filters to broaden the recommendation set.
+                </p>
+                <p className="mt-3 text-sm text-[var(--text-soft)] font-medium">
+                  Adjust your query or filters to broaden the recommendation set.
                 </p>
               </div>
             )}
           </div>
 
           {activeSection !== "Saved Papers" ? (
-            <div className="lg:sticky lg:top-[102px] self-start">
+            <div className="xl:sticky xl:top-[110px] self-start">
               <ExplainabilityPanel paper={selectedPaper} />
             </div>
           ) : null}
         </section>
+
+        {/* Footer band */}
+        <footer className="mt-16 border-t-[3px] border-[var(--border)] pt-6 pb-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="font-display text-xs uppercase tracking-[0.18em] text-[var(--text-soft)]">
+              PAPER<span className="text-[var(--accent-2)]">//</span>PUNK · Explainable AI · Built with brutal honesty
+            </p>
+            <div className="flex gap-2">
+              <span className="neu-tag" style={{ backgroundColor: "var(--accent)" }}>TF-IDF</span>
+              <span className="neu-tag" style={{ backgroundColor: "var(--accent-3)" }}>Cosine Sim</span>
+              <span className="neu-tag" style={{ backgroundColor: "var(--accent-4)" }}>Hybrid</span>
+            </div>
+          </div>
+        </footer>
       </main>
     </div>
   );

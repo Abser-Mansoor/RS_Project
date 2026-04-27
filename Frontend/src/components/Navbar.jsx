@@ -1,4 +1,4 @@
-import { LogIn, MoonStar, Search, Sun, UserCircle2 } from "lucide-react";
+import { LogIn, MoonStar, Search, Sun, UserCircle2, Zap } from "lucide-react";
 
 export default function Navbar({
   query,
@@ -9,55 +9,63 @@ export default function Navbar({
   onAuthClick,
 }) {
   return (
-    <header className="sticky top-0 z-20 border-b border-[var(--color-border)] bg-[var(--color-surface)]/80 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-[1380px] items-center gap-3 px-4 py-3.5 sm:px-6 lg:px-10">
-        <div className="flex min-w-fit items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)]">
-            <div className="h-2.5 w-2.5 rounded-full bg-[var(--color-accent)] pulse-soft" />
-          </div>
+    <header className="sticky top-0 z-30 border-b-[3px] border-[var(--border)] bg-[var(--paper)]">
+      {/* Top stripe band */}
+      <div className="h-2 neu-stripes opacity-90" />
 
-          <div className="leading-tight">
-            <p className="font-display text-[0.96rem] font-semibold text-[var(--color-text)] sm:text-base">
-              Research Recommender
+      <div className="mx-auto flex max-w-[1380px] items-center gap-3 px-4 py-3 sm:px-6 lg:px-10">
+        {/* Logo block */}
+        <div className="flex min-w-fit items-center gap-3">
+          <div className="flex h-11 w-11 items-center justify-center border-[3px] border-[var(--border)] bg-neu-yellow shadow-[3px_3px_0_0_var(--border)]">
+            <Zap size={20} strokeWidth={3} className="text-ink" fill="#0a0a0a" />
+          </div>
+          <div className="leading-none">
+            <p className="font-display text-base sm:text-lg uppercase tracking-tight text-[var(--text)]">
+              PAPER<span className="text-[var(--accent-2)]">//</span>PUNK
             </p>
-            <p className="hidden text-xs text-[var(--color-text-soft)] md:block">
-              Explainable paper intelligence
+            <p className="hidden md:block mt-1 text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--text-soft)]">
+              Explainable research engine
             </p>
           </div>
         </div>
 
-        <div className="min-w-0 flex-1 sm:mx-1">
+        {/* Search */}
+        <div className="min-w-0 flex-1 sm:mx-2">
           <div className="relative">
             <Search
-              size={17}
-              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"
+              size={18}
+              strokeWidth={3}
+              className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--ink)]"
             />
             <input
               value={query}
               onChange={(event) => onQueryChange(event.target.value)}
-              placeholder="Search by title, abstract, author, or keyword"
-              className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] py-2.5 pl-11 pr-4 text-sm text-[var(--color-text)] outline-none transition-all duration-200 focus:-translate-y-[1px] focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-soft)]"
+              placeholder="SEARCH PAPERS — TITLE / AUTHOR / KEYWORD"
+              className="neu-input pl-11 text-sm font-semibold uppercase tracking-wider"
             />
           </div>
         </div>
 
+        {/* Theme toggle */}
         <button
           type="button"
           onClick={onToggleTheme}
-          className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-2 text-[var(--color-text-soft)] transition-all duration-200 hover:-translate-y-[1px] hover:text-[var(--color-text)]"
+          className="neu-btn neu-btn-icon"
+          style={{ backgroundColor: isDark ? "var(--accent-5)" : "var(--accent-3)" }}
           aria-label="Toggle theme"
         >
-          {isDark ? <Sun size={17} /> : <MoonStar size={17} />}
+          {isDark ? <Sun size={18} strokeWidth={3} /> : <MoonStar size={18} strokeWidth={3} />}
         </button>
 
+        {/* Auth */}
         <button
           type="button"
           onClick={onAuthClick}
-          className="inline-flex items-center gap-2 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-elevated)] px-2.5 py-2 text-[var(--color-text-soft)] transition-all duration-200 hover:-translate-y-[1px] hover:text-[var(--color-text)]"
+          className={`neu-btn ${currentUser ? "neu-btn-pink" : "neu-btn-primary"}`}
           aria-label="User profile"
         >
-          {currentUser ? <UserCircle2 size={18} /> : <LogIn size={18} />}
-          <span className="hidden text-sm font-medium sm:inline">
+          {currentUser ? <UserCircle2 size={18} strokeWidth={3} /> : <LogIn size={18} strokeWidth={3} />}
+          <span className="hidden sm:inline uppercase tracking-wide">
             {currentUser ? currentUser.username : "Sign In"}
           </span>
         </button>

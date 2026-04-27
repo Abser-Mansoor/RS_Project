@@ -1,5 +1,5 @@
-import { LogOut, X } from "lucide-react";
-import { useState } from "react";
+import { LogOut, X, UserPlus, KeyRound, AlertOctagon, BookmarkCheck } from "lucide-react";
+import { useEffect, useState } from "react";
 import {
   getCurrentUser,
   loginUser,
@@ -14,6 +14,15 @@ export default function AuthModal({ isOpen, onClose, onAuthChange }) {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const currentUser = getCurrentUser();
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isOpen, onClose]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -49,84 +58,121 @@ export default function AuthModal({ isOpen, onClose, onAuthChange }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="surface w-full max-w-md rounded-2xl p-6 sm:p-8">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="font-display text-2xl font-semibold text-[var(--color-text)]">
-            {currentUser ? "Account" : mode === "login" ? "Sign In" : "Create Account"}
-          </h2>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      style={{ backgroundColor: "rgba(10,10,10,0.55)" }}
+      onClick={onClose}
+    >
+      <div
+        className="neu w-full max-w-md bg-[var(--surface)] p-6 sm:p-8 animate-pop-in"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header band */}
+        <div className="-mx-6 -mt-6 sm:-mx-8 sm:-mt-8 mb-6 border-b-[3px] border-[var(--border)] bg-neu-yellow px-6 sm:px-8 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center border-[3px] border-[var(--border)] bg-[var(--surface)] shadow-[3px_3px_0_0_var(--border)]">
+              {currentUser ? (
+                <BookmarkCheck size={16} strokeWidth={3} className="text-ink" />
+              ) : mode === "login" ? (
+                <KeyRound size={16} strokeWidth={3} className="text-ink" />
+              ) : (
+                <UserPlus size={16} strokeWidth={3} className="text-ink" />
+              )}
+            </div>
+            <h2 className="font-display text-xl uppercase tracking-tight text-ink">
+              {currentUser ? "Account" : mode === "login" ? "Sign In" : "Sign Up"}
+            </h2>
+          </div>
           <button
             onClick={onClose}
-            className="p-1 text-[var(--color-text-soft)] transition-colors hover:text-[var(--color-text)]"
+            className="neu-btn neu-btn-icon"
+            aria-label="Close"
+            type="button"
           >
-            <X size={24} />
+            <X size={18} strokeWidth={3} />
           </button>
         </div>
 
         {currentUser ? (
           <div className="space-y-4">
-            <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-elevated)] p-4">
-              <p className="text-sm text-[var(--color-text-soft)]">Logged in as</p>
-              <p className="mt-1 font-semibold text-[var(--color-text)]">
+            <div
+              className="border-[3px] border-[var(--border)] bg-[var(--paper-2)] p-4"
+              style={{ boxShadow: "4px 4px 0 0 var(--accent-3)" }}
+            >
+              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--text-soft)]">
+                Logged in as
+              </p>
+              <p className="mt-1 font-display text-xl uppercase text-[var(--text)]">
                 {currentUser.username}
               </p>
-              <p className="mt-2 text-xs text-[var(--color-text-soft)]">
-                Saved papers: {currentUser.savedPapers?.length || 0}
-              </p>
-              <p className="mt-1 text-xs text-[var(--color-text-soft)]">
-                Profile paper IDs: {currentUser.profile?.join(", ") || "None yet"}
-              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <span className="neu-tag" style={{ backgroundColor: "var(--accent-2)" }}>
+                  Saved · {currentUser.savedPapers?.length || 0}
+                </span>
+                <span className="neu-tag" style={{ backgroundColor: "var(--accent-4)" }}>
+                  Profile · {currentUser.profile?.length || 0}
+                </span>
+              </div>
             </div>
             <button
               onClick={handleLogout}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-[var(--color-border)] bg-red-100/20 px-4 py-2.5 font-semibold text-red-600 transition-all hover:bg-red-100/40 dark:bg-red-900/20 dark:text-red-400"
+              className="neu-btn neu-btn-danger w-full"
+              type="button"
             >
-              <LogOut size={16} />
+              <LogOut size={16} strokeWidth={3} />
               Log Out
             </button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-text-soft)]">
+              <label className="block text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--text-soft)] mb-2">
                 Username
               </label>
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="Enter username"
-                className="mt-2 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2.5 text-[var(--color-text)] outline-none transition-all focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-soft)]"
+                placeholder="ENTER USERNAME"
+                className="neu-input uppercase tracking-wider"
                 disabled={isLoading}
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-[0.14em] text-[var(--color-text-soft)]">
+              <label className="block text-[10px] font-bold uppercase tracking-[0.18em] text-[var(--text-soft)] mb-2">
                 Password
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password"
-                className="mt-2 w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2.5 text-[var(--color-text)] outline-none transition-all focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent-soft)]"
+                placeholder="ENTER PASSWORD"
+                className="neu-input uppercase tracking-wider"
                 disabled={isLoading}
               />
             </div>
 
             {error && (
-              <div className="rounded-lg border border-red-300 bg-red-50 p-3 text-sm text-red-700 dark:border-red-700/40 dark:bg-red-900/20 dark:text-red-300">
-                {error}
+              <div
+                className="flex items-start gap-2 border-[3px] border-[var(--border)] bg-neu-red p-3 text-sm font-bold text-cream"
+                style={{ boxShadow: "3px 3px 0 0 var(--border)" }}
+              >
+                <AlertOctagon size={16} strokeWidth={3} className="shrink-0 mt-0.5" />
+                <span>{error}</span>
               </div>
             )}
 
             <button
               type="submit"
               disabled={isLoading || !username || !password}
-              className="w-full rounded-xl border border-[var(--color-accent)] bg-[var(--color-accent)] px-4 py-2.5 font-semibold text-white outline-none transition-all hover:opacity-90 disabled:opacity-50"
+              className="neu-btn neu-btn-primary w-full text-base py-3 uppercase tracking-wider"
             >
-              {isLoading ? "Loading..." : mode === "login" ? "Sign In" : "Create Account"}
+              {isLoading
+                ? "Loading..."
+                : mode === "login"
+                ? "Sign In"
+                : "Create Account"}
             </button>
 
             <button
@@ -135,9 +181,9 @@ export default function AuthModal({ isOpen, onClose, onAuthChange }) {
                 setMode(mode === "login" ? "signup" : "login");
                 setError("");
               }}
-              className="w-full text-sm text-[var(--color-accent)]"
+              className="w-full text-xs font-bold uppercase tracking-[0.18em] text-[var(--text-soft)] hover:text-[var(--accent-2)] transition-colors py-2"
             >
-              {mode === "login" ? "Need an account? Sign up" : "Have an account? Sign in"}
+              {mode === "login" ? "→ Need an account? Sign up" : "← Have an account? Sign in"}
             </button>
           </form>
         )}
