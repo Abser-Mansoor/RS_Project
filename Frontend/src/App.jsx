@@ -1,5 +1,4 @@
 import {
-  BookOpenCheck,
   BookmarkCheck,
   LayoutGrid,
   Sparkles,
@@ -23,17 +22,6 @@ import {
 const sectionItems = [
   { label: "Dashboard", icon: LayoutGrid },
   { label: "Saved Papers", icon: BookmarkCheck },
-];
-
-const TECH = [
-  "TF-IDF",
-  "Cosine Similarity",
-  "Collaborative Filtering",
-  "Hybrid Ranking",
-  "Explainable AI",
-  "Python",
-  "Scikit-learn",
-  "React + Vite",
 ];
 
 const defaultFilters = {
@@ -280,34 +268,11 @@ export default function App() {
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-[var(--paper)] text-[var(--text)]">
       <Navbar
-        query={query}
-        onQueryChange={setQuery}
         isDark={isDarkMode}
         onToggleTheme={() => setIsDarkMode((value) => !value)}
         currentUser={currentUser}
         onAuthClick={() => setIsAuthModalOpen(true)}
       />
-
-      {/* Tech stack ticker */}
-      <div
-        className="overflow-hidden border-b-[2.5px] border-[var(--border)]"
-        style={{ background: "var(--accent)" }}
-      >
-        <div
-          className="flex items-center py-2.5"
-          style={{ width: "max-content", animation: "marquee-x 28s linear infinite" }}
-        >
-          {[...TECH, ...TECH].map((item, i) => (
-            <span
-              key={i}
-              className="flex items-center gap-3 px-6 font-mono text-[11px] font-bold uppercase tracking-[0.14em] text-[var(--ink)] whitespace-nowrap"
-            >
-              <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[var(--ink)]" />
-              {item}
-            </span>
-          ))}
-        </div>
-      </div>
 
       <AuthModal
         isOpen={isAuthModalOpen}
@@ -315,124 +280,134 @@ export default function App() {
         onAuthChange={handleAuthChange}
       />
 
-      <main className="relative mx-auto max-w-[1380px] px-4 pb-16 pt-8 sm:px-6 lg:px-10">
-        {/* HERO BLOCK */}
-        <section className="reveal-up mb-8 grid gap-5 lg:grid-cols-[1.6fr_1fr] lg:items-stretch">
-          <div className="neu bg-[var(--surface)] p-6 sm:p-8 relative overflow-hidden">
-            {/* Floating accent badge */}
-            <div
-              className="absolute top-5 right-5 h-14 w-14 flex items-center justify-center border-[2.5px] border-[var(--border)]"
+      {/* ── Hero ── */}
+      <section className="border-b-[2.5px] border-[var(--border)] bg-[var(--surface)]">
+        <div className="mx-auto max-w-[1380px] px-4 py-12 sm:px-6 lg:px-10">
+          <span
+            className="inline-flex items-center gap-1.5 neu-tag"
+            style={{ backgroundColor: "var(--accent-3)" }}
+          >
+            <span className="inline-block h-2 w-2 rounded-full bg-[var(--ink)] animate-blink" />
+            EXPLAINABLE · OPEN-SOURCE
+          </span>
+
+          <h1 className="mt-4 font-display text-5xl sm:text-6xl uppercase leading-none tracking-tight text-[var(--text)]">
+            Discover Papers
+            <br />
+            <span
+              className="inline-block px-2 mt-2"
               style={{
                 backgroundColor: "var(--accent)",
+                border: "2.5px solid var(--border)",
                 boxShadow: "var(--shadow-sm)",
-                animation: "float 3s ease-in-out infinite",
               }}
             >
-              <Sparkles size={22} strokeWidth={2.5} className="text-[var(--ink)]" />
-            </div>
+              that explain
+            </span>{" "}
+            themselves.
+          </h1>
 
-            <span className="inline-flex items-center gap-1.5 neu-tag" style={{ backgroundColor: "var(--accent-3)" }}>
-              <span className="inline-block h-2 w-2 rounded-full bg-ink animate-blink" />
-              EXPLAINABLE · OPEN-SOURCE
-            </span>
+          <p className="mt-5 max-w-xl text-[15px] leading-relaxed text-[var(--text-soft)] font-medium">
+            A transparent research recommender. Inspect{" "}
+            <strong className="text-[var(--text)]">why</strong> each paper is
+            recommended through keyword overlap, similarity evidence, and popularity signals.
+          </p>
 
-            <h1 className="mt-4 font-display text-4xl sm:text-5xl uppercase leading-[0.95] tracking-tight text-[var(--text)]">
-              Discover papers
-              <br />
-              <span
-                className="inline-block px-2 mt-2"
-                style={{
-                  backgroundColor: "var(--accent-2)",
-                  boxShadow: "var(--shadow-sm)",
-                  border: "2.5px solid var(--border)",
-                }}
+          {/* Inline stats strip */}
+          <div
+            className="mt-7 inline-flex border-[2.5px] border-[var(--border)]"
+            style={{ boxShadow: "var(--shadow-sm)" }}
+          >
+            {activeSection !== "Saved Papers" && (
+              <div
+                className="px-5 py-3 border-r-[2.5px] border-[var(--border)]"
+                style={{ background: "var(--accent)" }}
               >
-                that explain
-              </span>{" "}
-              themselves.
-            </h1>
+                <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--ink)]">Papers</p>
+                <p
+                  key={visiblePapers.length}
+                  className="font-display text-2xl uppercase text-[var(--ink)] leading-none animate-count-pop"
+                >
+                  {String(visiblePapers.length).padStart(2, "0")}
+                </p>
+              </div>
+            )}
+            <div className="px-5 py-3 border-r-[2.5px] border-[var(--border)] bg-[var(--surface)]">
+              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--text-soft)]">Saved</p>
+              <p
+                key={savedPaperIds.length}
+                className="font-display text-2xl uppercase text-[var(--text)] leading-none animate-count-pop"
+              >
+                {String(savedPaperIds.length).padStart(2, "0")}
+              </p>
+            </div>
+            <div className="px-5 py-3 bg-[var(--surface)]">
+              <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-[var(--text-soft)]">Mode</p>
+              <p
+                key={activeSection}
+                className="font-display text-base uppercase text-[var(--text)] leading-none animate-count-pop"
+              >
+                {activeSection === "Dashboard" ? "Dashboard" : "Saved"}
+              </p>
+            </div>
+          </div>
 
-            <p className="mt-5 max-w-2xl text-[15px] leading-relaxed text-[var(--text)] font-medium">
-              A transparent research recommender. Inspect <b>why</b> each paper is
-              recommended through keyword overlap, similarity evidence, and popularity
-              signals — no black boxes.
-            </p>
-
+          {/* Status badge */}
+          <div className="mt-4">
             {backendError ? (
               <div
-                className="mt-5 inline-flex items-start gap-2 border-[3px] border-[var(--border)] bg-neu-orange px-3 py-2 text-xs font-bold text-ink"
-                style={{ boxShadow: "3px 3px 0 0 var(--border)" }}
+                className="inline-flex items-center gap-2 border-[2.5px] border-[var(--border)] px-3 py-1.5 text-xs font-bold"
+                style={{ background: "var(--accent-3)", boxShadow: "var(--shadow-xs)" }}
               >
                 ⚠ {backendError}
               </div>
             ) : (
-              <p className="mt-5 inline-flex items-center gap-2 neu-tag" style={{ backgroundColor: isBackendConnected ? "var(--accent-3)" : "var(--paper-2)" }}>
-                <span className={`inline-block h-2 w-2 rounded-full ${isBackendConnected ? "bg-ink" : "bg-[var(--text-soft)]"}`} />
-                {isBackendConnected ? "LIVE BACKEND CONNECTED" : "OFFLINE · USING MOCK DATA"}
-              </p>
-            )}
-
-            <div className="mt-6 flex flex-wrap gap-3">
-              {sectionItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = item.label === activeSection;
-
-                return (
-                  <button
-                    key={item.label}
-                    type="button"
-                    onClick={() => setActiveSection(item.label)}
-                    className={`neu-btn ${isActive ? "neu-btn-primary" : ""}`}
-                  >
-                    <Icon size={15} strokeWidth={3} />
-                    <span className="uppercase tracking-wide">{item.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Stat cards */}
-          <div className="grid gap-4 sm:grid-cols-3 lg:grid-cols-1 lg:auto-rows-fr">
-            {activeSection !== "Saved Papers" ? (
-              <div
-                className="neu p-4"
-                style={{ backgroundColor: "var(--accent)" }}
+              <span
+                className="neu-tag"
+                style={{ backgroundColor: isBackendConnected ? "var(--accent)" : "var(--paper-2)" }}
               >
-                <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-ink">
-                  Recommendations
-                </p>
-                <p key={visiblePapers.length} className="mt-1 font-display text-4xl uppercase text-ink leading-none animate-count-pop">
-                  {String(visiblePapers.length).padStart(2, "0")}
-                </p>
-              </div>
-            ) : null}
-            <div
-              className="neu p-4"
-              style={{ backgroundColor: "var(--accent-2)" }}
-            >
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-ink">
-                Saved papers
-              </p>
-              <p key={savedPaperIds.length} className="mt-1 font-display text-4xl uppercase text-ink leading-none animate-count-pop">
-                {String(savedPaperIds.length).padStart(2, "0")}
-              </p>
-            </div>
-            <div
-              className="neu p-4 sm:col-span-3 lg:col-span-1"
-              style={{ backgroundColor: "var(--accent-4)" }}
-            >
-              <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-ink">
-                Active mode
-              </p>
-              <p key={activeSection} className="mt-1 font-display text-lg sm:text-xl uppercase tracking-tight text-ink leading-tight animate-count-pop">
-                {activeSection}
-              </p>
-            </div>
+                <span
+                  className={`inline-block h-2 w-2 rounded-full ${
+                    isBackendConnected ? "bg-[var(--ink)] animate-blink" : "bg-[var(--text-soft)]"
+                  }`}
+                />
+                {isBackendConnected ? "LIVE BACKEND" : "OFFLINE · MOCK DATA"}
+              </span>
+            )}
           </div>
-        </section>
+        </div>
+      </section>
 
-        <div className="reveal-up delay-1">
+      <main className="relative mx-auto max-w-[1380px] px-4 pb-16 pt-8 sm:px-6 lg:px-10">
+        {/* Tab navigation */}
+        <div
+          className="mb-6 inline-flex border-[2.5px] border-[var(--border)]"
+          style={{ boxShadow: "var(--shadow-xs)" }}
+        >
+          {sectionItems.map(({ label, icon: Icon }, i) => {
+            const isActive = activeSection === label;
+            return (
+              <button
+                key={label}
+                type="button"
+                onClick={() => setActiveSection(label)}
+                className={`flex items-center gap-2 px-4 py-2.5 text-xs font-bold uppercase tracking-[0.12em] transition-colors ${
+                  i < sectionItems.length - 1 ? "border-r-[2.5px] border-[var(--border)]" : ""
+                }`}
+                style={{
+                  background: isActive ? "var(--accent)" : "var(--surface)",
+                  color: "var(--ink)",
+                }}
+              >
+                <Icon size={13} strokeWidth={3} />
+                {label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Search */}
+        <div className="mb-6 reveal-up">
           <SearchSection
             query={query}
             onQueryChange={setQuery}
@@ -444,32 +419,41 @@ export default function App() {
           />
         </div>
 
-        <section className="mt-8 grid items-start gap-7 xl:grid-cols-[minmax(0,1.66fr)_minmax(0,400px)]">
-          <div className="reveal-up delay-2">
-            {activeSection !== "Saved Papers" ? (
-              <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-9 w-9 items-center justify-center border-[2.5px] border-[var(--border)] bg-neu-yellow shadow-[3px_3px_0_0_var(--border)]">
-                    <Sparkles size={16} strokeWidth={3} className="text-ink" />
+        <section className="grid items-start gap-7 xl:grid-cols-[minmax(0,1.66fr)_minmax(0,400px)]">
+          <div className="reveal-up delay-1">
+          {/* Section heading */}
+          <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              {activeSection !== "Saved Papers" ? (
+                <>
+                  <div
+                    className="flex h-8 w-8 items-center justify-center border-[2.5px] border-[var(--border)]"
+                    style={{ background: "var(--accent)", boxShadow: "var(--shadow-xs)" }}
+                  >
+                    <Sparkles size={14} strokeWidth={3} className="text-[var(--ink)]" />
                   </div>
-                  <h2 className="font-display text-lg uppercase tracking-tight text-[var(--text)]">
+                  <h2 className="font-display text-base uppercase tracking-tight text-[var(--text)]">
                     Recommended Papers
                   </h2>
-                </div>
-                <span className="neu-tag" style={{ backgroundColor: "var(--accent-3)" }}>
-                  <BookOpenCheck size={11} strokeWidth={3} /> Transparency-first
-                </span>
-              </div>
-            ) : (
-              <div className="mb-5 flex items-center gap-2">
-                <div className="flex h-9 w-9 items-center justify-center border-[2.5px] border-[var(--border)] bg-neu-pink shadow-[3px_3px_0_0_var(--border)]">
-                  <BookmarkCheck size={16} strokeWidth={3} className="text-ink" />
-                </div>
-                <h2 className="font-display text-lg uppercase tracking-tight text-[var(--text)]">
-                  Your Saved Papers
-                </h2>
-              </div>
-            )}
+                </>
+              ) : (
+                <>
+                  <div
+                    className="flex h-8 w-8 items-center justify-center border-[2.5px] border-[var(--border)]"
+                    style={{ background: "var(--accent-2)", boxShadow: "var(--shadow-xs)" }}
+                  >
+                    <BookmarkCheck size={14} strokeWidth={3} className="text-[var(--ink)]" />
+                  </div>
+                  <h2 className="font-display text-base uppercase tracking-tight text-[var(--text)]">
+                    Saved Papers
+                  </h2>
+                </>
+              )}
+            </div>
+            <span className="neu-tag">
+              {visiblePapers.length} paper{visiblePapers.length !== 1 ? "s" : ""}
+            </span>
+          </div>
 
             {isLoading ? (
               <LoadingSkeleton count={5} />
@@ -491,10 +475,7 @@ export default function App() {
                 })}
               </div>
             ) : (
-              <div
-                className="neu p-10 text-center bg-[var(--surface)]"
-                style={{ boxShadow: "6px 6px 0 0 var(--accent-2)" }}
-              >
+              <div className="neu p-10 text-center bg-[var(--surface)]">
                 <p className="font-display text-2xl uppercase tracking-tight text-[var(--text)]">
                   No matching papers
                 </p>
@@ -512,16 +493,16 @@ export default function App() {
           ) : null}
         </section>
 
-        {/* Footer band */}
-        <footer className="mt-16 border-t-[3px] border-[var(--border)] pt-6 pb-4">
+        {/* Footer */}
+        <footer className="mt-16 border-t-[2.5px] border-[var(--border)] pb-2 pt-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="font-display text-xs uppercase tracking-[0.18em] text-[var(--text-soft)]">
-              PAPER<span className="text-[var(--accent-2)]">//</span>PUNK · Explainable AI · Built with brutal honesty
+              PAPER<span style={{ color: "var(--accent-4)" }}>//</span>PUNK · Explainable AI
             </p>
             <div className="flex gap-2">
               <span className="neu-tag" style={{ backgroundColor: "var(--accent)" }}>TF-IDF</span>
               <span className="neu-tag" style={{ backgroundColor: "var(--accent-3)" }}>Cosine Sim</span>
-              <span className="neu-tag" style={{ backgroundColor: "var(--accent-4)" }}>Hybrid</span>
+              <span className="neu-tag" style={{ backgroundColor: "var(--accent-2)" }}>Hybrid</span>
             </div>
           </div>
         </footer>

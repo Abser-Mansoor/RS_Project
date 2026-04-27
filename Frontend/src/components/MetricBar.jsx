@@ -3,9 +3,9 @@ import { useEffect, useState } from "react";
 const toneStyles = {
   accent:  { bg: "var(--accent)",   label: "var(--ink)" },
   emerald: { bg: "var(--accent-3)", label: "var(--ink)" },
-  amber:   { bg: "var(--accent-6)", label: "var(--ink)" },
-  pink:    { bg: "var(--accent-2)", label: "#fff" },
-  purple:  { bg: "var(--accent-5)", label: "var(--ink)" },
+  amber:   { bg: "var(--accent-6)", label: "#fff" },
+  pink:    { bg: "var(--accent-2)", label: "var(--ink)" },
+  purple:  { bg: "var(--accent-5)", label: "#fff" },
 };
 
 function clampValue(value) {

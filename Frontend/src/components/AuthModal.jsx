@@ -68,7 +68,7 @@ export default function AuthModal({ isOpen, onClose, onAuthChange }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header band */}
-        <div className="-mx-6 -mt-6 sm:-mx-8 sm:-mt-8 mb-6 border-b-[2.5px] border-[var(--border)] bg-neu-yellow px-6 sm:px-8 py-4 flex items-center justify-between">
+        <div className="-mx-6 -mt-6 sm:-mx-8 sm:-mt-8 mb-6 border-b-[2.5px] border-[var(--border)] px-6 sm:px-8 py-4 flex items-center justify-between" style={{ background: "var(--accent)" }}>
           <div className="flex items-center gap-3">
             <div className="flex h-9 w-9 items-center justify-center border-[2.5px] border-[var(--border)] bg-[var(--surface)]" style={{ boxShadow: "var(--shadow-xs)" }}>
               {currentUser ? (
@@ -156,7 +156,7 @@ export default function AuthModal({ isOpen, onClose, onAuthChange }) {
             {error && (
               <div
                 className="flex items-start gap-2 border-[2.5px] border-[var(--border)] p-3 text-sm font-bold"
-                style={{ background: "var(--accent-2)", color: "#fff", boxShadow: "var(--shadow-xs)" }}
+                style={{ background: "var(--accent-5)", color: "#fff", boxShadow: "var(--shadow-xs)" }}
               >
                 <AlertOctagon size={16} strokeWidth={3} className="shrink-0 mt-0.5" />
                 <span>{error}</span>
